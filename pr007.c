@@ -5,11 +5,33 @@
 #include <unistd.h>
 
 int main(int argc, char *argv[], char *envp[]) {
-	printf("Внутри програмы pr007.out\n");
-	printf("Переключение пользовательского контекста на программу cat\n\n");
-	(void) execle("/bin/cat","/bin/cat", "pr007.c",0, envp);
-	printf("Oшибка при выполнении системного вызова exec\n");
-	exit(-1);
+	int result;
+	pid_t pid, ppid;
+	pid = getpid();
+	ppid = getpid();
+	printf("идентификатор текущего процесса: %d, Ид. родительского процесса: %d\n", pid, ppid);
+	printf("Выполняем fork()\n");
+	result = fork();
+	if (result > 0) {
+		pid = getpid();
+		ppid = getpid();
+		printf("Работает процесс родитель\n");
+		printf("Псоле запуска fork():\n");
+		printf("идентификатор текущего процесса: %d, Ид. родительского процесса: %d\n", pid, ppid);
+		printf("Родитель завершил работу\n");
+
+	}
+	else if(result == 0){
+		printf("заменяем пользв контекст проц ребенка\n");
+		(void) execle("./pr002.out", "./pr002.out", 0, envp);
+		printf("Ошибка при выполнении сист вызова exec\n");
+		exit(-1);
+	
+	}
+	else {
+		printf("Ошибка при выполнении вызова fork\n");
+		exit(-1);
+	}
 	return 0;
 	
 }
